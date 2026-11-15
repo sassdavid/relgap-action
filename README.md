@@ -1,12 +1,19 @@
 # relgap-action
 
 A composite GitHub Action that installs a verified [relgap](https://github.com/sassdavid/relgap)
-release on Linux, macOS and Windows runners.
+release on Linux, macOS and Windows runners. In report mode it runs `relgap outdated` or
+`relgap drift` and sends the findings to code scanning. In comment mode it digests the tools a
+pull request upgrades and keeps one comment on the pull request.
 
-There is no release yet. v1.0.0 follows once the report and comment modes land (relgap milestone
-M14).
+There is no release yet. v1.0.0 follows once report and comment mode are proven on a test
+repository (relgap milestone M14).
 
 ## Usage
+
+Pin the action by commit SHA. Each `vX.Y.Z` release is immutable. The `v1` tag moves to the
+newest 1.x release and has no release of its own.
+
+### Install
 
 ```yaml
 steps:
@@ -15,8 +22,76 @@ steps:
   - run: relgap outdated
 ```
 
-Pin the action by commit SHA. Each `vX.Y.Z` release is immutable. The `v1` tag moves to the
-newest 1.x release and has no release of its own.
+### Report
+
+One `relgap outdated` (the default) or `relgap drift` run writes JSON, Markdown, SARIF and
+annotations. The action uploads the SARIF to code scanning and appends the Markdown to the step
+summary. A `fail-on` match exits 3 and fails the step after the upload.
+
+```yaml
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "23 6 * * 1"
+
+permissions: {}
+
+jobs:
+  outdated:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # the SARIF upload
+    steps:
+      - uses: actions/checkout@<commit SHA> # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: sassdavid/relgap-action@<commit SHA> # v1.0.0
+        with:
+          mode: report
+          fail-on: eol, vuln
+```
+
+The alerts are under Security > Code scanning, in the category `relgap-outdated` (or
+`relgap-drift`). With a `working-directory` other than the repository root, the category ends
+with `/<directory>`. SARIF locations are relative to `working-directory`, so code scanning links
+to the right file only when that directory is the repository root.
+
+### Comment
+
+On a `pull_request` event, `relgap digest --pull-request` digests each tool whose pinned version
+the pull request changes, from the base version to the head version. On a Renovate pull request it
+digests only the dependency the branch names. `relgap notify` keeps one comment with the digest:
+a re-run edits it, and only when the digest changed.
+
+A pull request from a fork or from Dependabot gets a read-only `GITHUB_TOKEN`. The action then
+skips the comment, says why in a notice, and writes the digest to the step summary.
+
+```yaml
+on:
+  pull_request:
+    paths: ["mise.toml", ".tool-versions", "**/*.tf", "**/*.hcl", "**/Dockerfile"]
+
+permissions: {}
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # the comment
+    steps:
+      - uses: actions/checkout@<commit SHA> # v7.0.1
+        with:
+          fetch-depth: 0 # relgap reads the pins at the base commit
+          persist-credentials: false
+      - uses: sassdavid/relgap-action@<commit SHA> # v1.0.0
+        with:
+          mode: comment
+          fail-on: breaking
+```
 
 ## Inputs
 
@@ -24,8 +99,18 @@ newest 1.x release and has no release of its own.
 |---|---|---|
 | `version` | the pin in `scripts/tool.env` | relgap version: `X.Y.Z`, `vX.Y.Z` or `latest` |
 | `verify` | `attestation` | the check after sha256: `attestation`, `cosign` or `checksum` |
-| `mode` | `install` | what runs after the install; `install` only puts relgap on PATH |
-| `github-token` | `${{ github.token }}` | token for `gh attestation verify` |
+| `mode` | `install` | `install`, `report` or `comment` |
+| `command` | `outdated` in report mode, `digest` in comment mode | report takes `outdated` or `drift`, comment takes `digest` |
+| `args` | | more arguments for the command, one per line |
+| `from` | | not used by relgap; a value exits 2 |
+| `fail-on` | | `--fail-on` values, separated by commas or newlines |
+| `sarif` | `true` | upload the SARIF to code scanning |
+| `step-summary` | `true` | append the Markdown to the step summary |
+| `github-token` | `${{ github.token }}` | token for `gh attestation verify`, relgap's GitHub API calls, the SARIF upload and the comment |
+| `working-directory` | `.` | directory the command runs in |
+
+A bad input exits 2 before the install: an unknown mode or command, or `command`, `args`,
+`from` or `fail-on` in install mode.
 
 ## Outputs
 
@@ -33,6 +118,13 @@ newest 1.x release and has no release of its own.
 |---|---|
 | `version` | the installed version, without a leading `v` |
 | `path` | absolute path of the relgap binary |
+| `exit-code` | the command's exit code: 0, 1 (a source failed), 2 (usage), 3 (`fail-on` matched) or 4 (auth) |
+| `json-file` | absolute path of the JSON report |
+| `sarif-file` | absolute path of the SARIF file (`outdated` and `drift` only) |
+| `md-file` | absolute path of the Markdown report |
+
+The step fails with the command's exit code. In comment mode a refused comment fails it with
+notify's code when the command passed.
 
 ## Verification
 
@@ -51,12 +143,15 @@ check that `verify` names. There is no option to skip verification.
 ## Development
 
 ```sh
-mise run check          # jactionlint, shellcheck, prose lint, install tests (network and gh)
+mise run check          # jactionlint, shellcheck, prose lint, install tests (network and gh), run tests
 mise run sibling:diff   # compare the files shared with tfcensus-action and relgap
 ```
 
-CI runs the install tests and the action itself on ubuntu, macos and windows, and zizmor in
-`security.yml`.
+CI runs the install and run tests and the action itself on ubuntu, macos and windows, and zizmor
+in `security.yml`. `scripts/test-run.sh` runs `scripts/run.sh` with a stub binary: the inputs,
+the arguments each mode builds, the outputs, the exit codes, and the comment rules for forks and
+Dependabot. Report and comment mode run for real on
+[sassdavid/action-test](https://github.com/sassdavid/action-test).
 
 ## License
 
