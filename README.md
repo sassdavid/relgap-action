@@ -5,7 +5,7 @@ release on Linux, macOS and Windows runners. In report mode it runs `relgap outd
 `relgap drift` and sends the findings to code scanning. In comment mode it digests the tools a
 pull request upgrades and keeps one comment on the pull request.
 
-v1.0.0 is on the [GitHub Marketplace](https://github.com/marketplace/actions/relgap).
+The action is on the [GitHub Marketplace](https://github.com/marketplace/actions/relgap).
 
 ## Usage
 
