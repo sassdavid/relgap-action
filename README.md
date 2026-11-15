@@ -5,8 +5,7 @@ release on Linux, macOS and Windows runners. In report mode it runs `relgap outd
 `relgap drift` and sends the findings to code scanning. In comment mode it digests the tools a
 pull request upgrades and keeps one comment on the pull request.
 
-There is no release yet. v1.0.0 follows once report and comment mode are proven on a test
-repository (relgap milestone M14).
+v1.0.0 is on the [GitHub Marketplace](https://github.com/marketplace/actions/relgap).
 
 ## Usage
 
@@ -17,8 +16,8 @@ newest 1.x release and has no release of its own.
 
 ```yaml
 steps:
-  - uses: actions/checkout@<commit SHA> # v7.0.1
-  - uses: sassdavid/relgap-action@<commit SHA> # v1.0.0
+  - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+  - uses: sassdavid/relgap-action@4c1862331d5a9380bab6f9fcd7f65c74839d8370 # v1.0.0
   - run: relgap outdated
 ```
 
@@ -45,10 +44,10 @@ jobs:
       contents: read
       security-events: write # the SARIF upload
     steps:
-      - uses: actions/checkout@<commit SHA> # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: sassdavid/relgap-action@<commit SHA> # v1.0.0
+      - uses: sassdavid/relgap-action@4c1862331d5a9380bab6f9fcd7f65c74839d8370 # v1.0.0
         with:
           mode: report
           fail-on: eol, vuln
@@ -83,11 +82,11 @@ jobs:
       contents: read
       pull-requests: write # the comment
     steps:
-      - uses: actions/checkout@<commit SHA> # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # relgap reads the pins at the base commit
           persist-credentials: false
-      - uses: sassdavid/relgap-action@<commit SHA> # v1.0.0
+      - uses: sassdavid/relgap-action@4c1862331d5a9380bab6f9fcd7f65c74839d8370 # v1.0.0
         with:
           mode: comment
           fail-on: breaking
