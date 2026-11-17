@@ -33,7 +33,7 @@ keeps one pull request comment. The milestone is M14 in relgap's
   gets a release.
 - Conventional Commits. release-please owns versions and tags.
 - Renovate: the setup and the shared rules are in relgap's engineering ADR-0015 and
-  `docs/engineering/ci-and-release.md#renovate`. Rules only this repo has, in `renovate.json`: a
+  `docs/engineering/ci-and-release.md#renovate`; follow `.claude/rules/renovate.md`. Rules only this repo has, in `renovate.json`: a
   relgap release bumps `TOOL_VERSION` in `scripts/tool.env` as `feat` (major, minor) or `fix`
   (patch), so release-please releases the action; the owner's releases skip the 3-day cooldown; a
   regex manager updates the SHAs in the README examples, and the pin of this action gets a `docs`
