@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/sassdavid/relgap-action/compare/v1.1.0...v1.2.0) (2026-11-18)
+
+
+### Features
+
+* install relgap 0.9.0 ([#24](https://github.com/sassdavid/relgap-action/issues/24)) ([4ad954e](https://github.com/sassdavid/relgap-action/commit/4ad954ed8809f1951cebc4f12be275891e630d04))
+
 ## [1.1.0](https://github.com/sassdavid/relgap-action/compare/v1.0.0...v1.1.0) (2026-11-17)
 
 
