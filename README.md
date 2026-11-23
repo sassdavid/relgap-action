@@ -17,7 +17,7 @@ newest 1.x release and has no release of its own.
 ```yaml
 steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  - uses: sassdavid/relgap-action@4c1862331d5a9380bab6f9fcd7f65c74839d8370 # v1.0.0
+  - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
   - run: relgap outdated
 ```
 
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: sassdavid/relgap-action@4c1862331d5a9380bab6f9fcd7f65c74839d8370 # v1.0.0
+      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
         with:
           mode: report
           fail-on: eol, vuln
@@ -86,7 +86,7 @@ jobs:
         with:
           fetch-depth: 0 # relgap reads the pins at the base commit
           persist-credentials: false
-      - uses: sassdavid/relgap-action@4c1862331d5a9380bab6f9fcd7f65c74839d8370 # v1.0.0
+      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
         with:
           mode: comment
           fail-on: breaking
