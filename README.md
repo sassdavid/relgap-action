@@ -18,7 +18,7 @@ newest 1.x release and has no release of its own.
 ```yaml
 steps:
   - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-  - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+  - uses: sassdavid/relgap-action@72f0b2c5c6db2930ef7d3410e4700eeec60595e8 # v1.3.1
   - run: relgap outdated
 ```
 
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+      - uses: sassdavid/relgap-action@72f0b2c5c6db2930ef7d3410e4700eeec60595e8 # v1.3.1
         with:
           mode: report
           fail-on: eol, vuln
@@ -63,12 +63,12 @@ to the right file only when that directory is the repository root.
 
 `command: audit` lists the known vulnerabilities of every pinned tool version, with the version
 that fixes each, and the pins OSV can't check with the reason. It needs relgap 0.13.0 or later,
-the version this action installs by default. Unlike `outdated` and `drift`, `audit` gates `vuln`
-when `fail-on` is empty, as audit tools do, so a finding fails the step. Name the gates in
+which the default pin in `scripts/tool.env` meets. Unlike `outdated` and `drift`, `audit` gates
+`vuln` when `fail-on` is empty, as audit tools do, so a finding fails the step. Name the gates in
 `fail-on` (`vuln`, `unchecked`, `kev`) to change them, or narrow `vuln` in `args`:
 
 ```yaml
-      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+      - uses: sassdavid/relgap-action@72f0b2c5c6db2930ef7d3410e4700eeec60595e8 # v1.3.1
         with:
           mode: report
           command: audit
@@ -80,7 +80,7 @@ when `fail-on` is empty, as audit tools do, so a finding fails the step. Name th
 To report the findings without failing the step, turn the gate off with an empty `--fail-on`:
 
 ```yaml
-      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+      - uses: sassdavid/relgap-action@72f0b2c5c6db2930ef7d3410e4700eeec60595e8 # v1.3.1
         with:
           mode: report
           command: audit
@@ -119,7 +119,7 @@ jobs:
         with:
           fetch-depth: 0 # relgap reads the pins at the base commit
           persist-credentials: false
-      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+      - uses: sassdavid/relgap-action@72f0b2c5c6db2930ef7d3410e4700eeec60595e8 # v1.3.1
         with:
           mode: comment
           fail-on: breaking
