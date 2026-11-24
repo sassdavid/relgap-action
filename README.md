@@ -129,7 +129,7 @@ jobs:
 
 | Input | Default | Meaning |
 |---|---|---|
-| `version` | the pin in `scripts/tool.env` | relgap version: `X.Y.Z`, `vX.Y.Z` or `latest` |
+| `version` | the pin in `scripts/tool.env` | relgap version: `X.Y.Z`, `vX.Y.Z` or `latest`; comment mode needs 0.5.0 or later |
 | `verify` | `attestation` | the check after sha256: `attestation`, `cosign` or `checksum` |
 | `mode` | `install` | `install`, `report` or `comment` |
 | `command` | `outdated` in report mode, `digest` in comment mode | report takes `outdated`, `drift` or `audit`, comment takes `digest` or `audit` |
@@ -141,8 +141,10 @@ jobs:
 | `github-token` | `${{ github.token }}` | token for `gh attestation verify`, relgap's GitHub API calls, the SARIF upload and the comment |
 | `working-directory` | `.` | directory the command runs in |
 
-A bad input exits 2 before the install: an unknown mode or command, or `command`, `args`,
-`from` or `fail-on` in install mode.
+A bad input exits 2 before the install: an unknown mode or command, `command`, `args`, `from`
+or `fail-on` in install mode, or comment mode with a `version` below 0.5.0. relgap 0.4.0 and
+older quote release notes with their user mentions and issue references, so the comment would
+notify the upstream authors.
 
 ## Outputs
 
