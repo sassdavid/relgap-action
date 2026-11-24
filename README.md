@@ -129,7 +129,7 @@ jobs:
 
 | Input | Default | Meaning |
 |---|---|---|
-| `version` | the pin in `scripts/tool.env` | relgap version: `X.Y.Z`, `vX.Y.Z` or `latest`; comment mode needs 0.5.0 or later |
+| `version` | the pin in `scripts/tool.env` | relgap version: `X.Y.Z`, `vX.Y.Z` or `latest`; comment mode needs 0.13.1 or later |
 | `verify` | `attestation` | the check after sha256: `attestation`, `cosign` or `checksum` |
 | `mode` | `install` | `install`, `report` or `comment` |
 | `command` | `outdated` in report mode, `digest` in comment mode | report takes `outdated`, `drift` or `audit`, comment takes `digest` or `audit` |
@@ -142,9 +142,10 @@ jobs:
 | `working-directory` | `.` | directory the command runs in |
 
 A bad input exits 2 before the install: an unknown mode or command, `command`, `args`, `from`
-or `fail-on` in install mode, or comment mode with a `version` below 0.5.0. relgap 0.4.0 and
-older quote release notes with their user mentions and issue references, so the comment would
-notify the upstream authors.
+or `fail-on` in install mode, or comment mode with a `version` below 0.13.1. Older relgap
+releases can notify upstream authors from the comment: 0.4.0 and older quote release notes with
+their user mentions and issue references, and 0.5.0 to 0.13.0 miss some of them, such as one
+after a non-ASCII letter or written as a character reference.
 
 ## Outputs
 
