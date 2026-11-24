@@ -1,9 +1,10 @@
 # relgap-action
 
 A composite GitHub Action that installs a verified [relgap](https://github.com/sassdavid/relgap)
-release on Linux, macOS and Windows runners. In report mode it runs `relgap outdated` or
-`relgap drift` and sends the findings to code scanning. In comment mode it digests the tools a
-pull request upgrades and keeps one comment on the pull request.
+release on Linux, macOS and Windows runners. In report mode it runs `relgap outdated`,
+`relgap drift` or `relgap audit` and sends the findings to code scanning. In comment mode it
+digests the tools a pull request upgrades, or audits the pinned versions, and keeps one comment
+on the pull request.
 
 The action is on the [GitHub Marketplace](https://github.com/marketplace/actions/relgap).
 
@@ -23,9 +24,9 @@ steps:
 
 ### Report
 
-One `relgap outdated` (the default) or `relgap drift` run writes JSON, Markdown, SARIF and
-annotations. The action uploads the SARIF to code scanning and appends the Markdown to the step
-summary. A `fail-on` match exits 3 and fails the step after the upload.
+One `relgap outdated` (the default), `relgap drift` or `relgap audit` run writes JSON, Markdown,
+SARIF and annotations. The action uploads the SARIF to code scanning and appends the Markdown to
+the step summary. A `fail-on` match exits 3 and fails the step after the upload.
 
 ```yaml
 on:
@@ -54,9 +55,41 @@ jobs:
 ```
 
 The alerts are under Security > Code scanning, in the category `relgap-outdated` (or
-`relgap-drift`). With a `working-directory` other than the repository root, the category ends
-with `/<directory>`. SARIF locations are relative to `working-directory`, so code scanning links
+`relgap-drift`, `relgap-audit`). With a `working-directory` other than the repository root, the
+category ends with `/<directory>`. SARIF locations are relative to `working-directory`, so code scanning links
 to the right file only when that directory is the repository root.
+
+### Audit
+
+`command: audit` lists the known vulnerabilities of every pinned tool version, with the version
+that fixes each, and the pins OSV can't check with the reason. It needs relgap 0.13.0 or later,
+the version this action installs by default. Unlike `outdated` and `drift`, `audit` gates `vuln`
+when `fail-on` is empty, as audit tools do, so a finding fails the step. Name the gates in
+`fail-on` (`vuln`, `unchecked`, `kev`) to change them, or narrow `vuln` in `args`:
+
+```yaml
+      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+        with:
+          mode: report
+          command: audit
+          args: |
+            --vuln-severity
+            high
+```
+
+To report the findings without failing the step, turn the gate off with an empty `--fail-on`:
+
+```yaml
+      - uses: sassdavid/relgap-action@518ce61cef05d84d2bd980c553bd24fdca9ed0c7 # v1.2.0
+        with:
+          mode: report
+          command: audit
+          args: --fail-on=
+```
+
+In comment mode, `command: audit` keeps one comment with the audit on the pull request. It opens
+when the audit has a finding or an error, or when a pin is unchecked because OSV failed or the
+name resolves to no tool. Images, charts and other pins without an advisory source don't open it.
 
 ### Comment
 
@@ -99,7 +132,7 @@ jobs:
 | `version` | the pin in `scripts/tool.env` | relgap version: `X.Y.Z`, `vX.Y.Z` or `latest` |
 | `verify` | `attestation` | the check after sha256: `attestation`, `cosign` or `checksum` |
 | `mode` | `install` | `install`, `report` or `comment` |
-| `command` | `outdated` in report mode, `digest` in comment mode | report takes `outdated` or `drift`, comment takes `digest` |
+| `command` | `outdated` in report mode, `digest` in comment mode | report takes `outdated`, `drift` or `audit`, comment takes `digest` or `audit` |
 | `args` | | more arguments for the command, one per line |
 | `from` | | not used by relgap; a value exits 2 |
 | `fail-on` | | `--fail-on` values, separated by commas or newlines |
@@ -119,7 +152,7 @@ A bad input exits 2 before the install: an unknown mode or command, or `command`
 | `path` | absolute path of the relgap binary |
 | `exit-code` | the command's exit code: 0, 1 (a source failed), 2 (usage), 3 (`fail-on` matched) or 4 (auth) |
 | `json-file` | absolute path of the JSON report |
-| `sarif-file` | absolute path of the SARIF file (`outdated` and `drift` only) |
+| `sarif-file` | absolute path of the SARIF file (`outdated`, `drift` and `audit` only) |
 | `md-file` | absolute path of the Markdown report |
 
 The step fails with the command's exit code. In comment mode a refused comment fails it with
