@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/sassdavid/relgap-action/compare/v1.3.0...v1.3.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* refuse comment mode below relgap 0.5.0 ([#33](https://github.com/sassdavid/relgap-action/issues/33)) ([e3d755f](https://github.com/sassdavid/relgap-action/commit/e3d755f4e758e3ff4dd6e51f191b2ae986259ad1))
+* require relgap 0.13.1 for comment mode ([#35](https://github.com/sassdavid/relgap-action/issues/35)) ([f9377b0](https://github.com/sassdavid/relgap-action/commit/f9377b045ee9a92d533d789f5a84e56a31673779))
+
 ## [1.3.0](https://github.com/sassdavid/relgap-action/compare/v1.2.0...v1.3.0) (2026-11-24)
 
 
