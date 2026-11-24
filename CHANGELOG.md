@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/sassdavid/relgap-action/compare/v1.2.0...v1.3.0) (2026-11-24)
+
+
+### Features
+
+* **deps:** update dependency sassdavid/relgap to v0.12.1 ([#29](https://github.com/sassdavid/relgap-action/issues/29)) ([693a38b](https://github.com/sassdavid/relgap-action/commit/693a38b3581884d2f36cdaded6fab32e70c8ba48))
+* run relgap audit in report and comment mode ([#32](https://github.com/sassdavid/relgap-action/issues/32)) ([2fe5a2b](https://github.com/sassdavid/relgap-action/commit/2fe5a2b5cba5b14f7702fade6b267b4585691690))
+
 ## [1.2.0](https://github.com/sassdavid/relgap-action/compare/v1.1.0...v1.2.0) (2026-11-18)
 
 
